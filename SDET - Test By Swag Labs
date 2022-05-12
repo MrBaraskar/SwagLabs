@@ -1,0 +1,67 @@
+package TestCase;
+
+import java.io.FileInputStream;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+public class Functionality {
+	WebDriver driver;
+	String link;
+	@BeforeMethod
+	public void DriverSetup() throws Exception
+	{	
+		
+		FileInputStream fis = new FileInputStream("PropertiesFile\\SwagLabs.properties");
+		Properties properties = new Properties();
+		properties.load(fis);
+		link = properties.getProperty("URL");
+
+		System.setProperty("webdriver.chrome.driver", "BrowserExe\\chromedriver101.exe");
+		driver = new ChromeDriver();
+		driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
+	}
+
+	@Test(priority = 1)
+	public void HomePage_1 () throws Exception
+	{
+		driver.get(link);
+		driver.manage().window().maximize();
+		Thread.sleep(1000);
+		String exceptedTitle = "Swag Labs";
+		String  actualTitle = driver.getTitle();
+		Thread.sleep(1000);
+		Assert.assertEquals(actualTitle, exceptedTitle);
+		System.out.println(actualTitle);
+		System.out.println("Run Successfully...");		
+	}
+	
+	@Test(priority = 2)
+    public void Login () throws Exception
+    {
+		driver.get(link);
+		driver.manage().window().maximize();
+		Thread.sleep(500);
+		driver.findElement(By.id("user-name")).sendKeys("standard_user");
+		Thread.sleep(500);
+		driver.findElement(By.id("password")).sendKeys("secret_sauce");
+		Thread.sleep(500);
+		driver.findElement(By.xpath("//input[@id=\"login-button\"]")).click();
+		Thread.sleep(500);
+		
+		}
+	
+	@AfterMethod
+	public void closeWebTab()
+	{
+		driver.close();
+		driver.quit();
+	}
+}
